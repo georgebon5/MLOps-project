@@ -2,9 +2,11 @@
 Generates a synthetic Bank Customer Churn dataset that mirrors the
 real-world Kaggle Churn_Modelling.csv schema and class imbalance (~20% churn).
 """
+
+import os
+
 import numpy as np
 import pandas as pd
-import os
 
 np.random.seed(42)
 N = 10_000
@@ -33,22 +35,24 @@ churn_prob = (
 churn_prob = np.clip(churn_prob, 0, 1)
 exited = (np.random.rand(N) < churn_prob).astype(int)
 
-df = pd.DataFrame({
-    "RowNumber": range(1, N + 1),
-    "CustomerId": np.random.randint(15_000_000, 16_000_000, N),
-    "Surname": ["Customer_" + str(i) for i in range(N)],
-    "CreditScore": credit_score,
-    "Geography": geography,
-    "Gender": gender,
-    "Age": age,
-    "Tenure": tenure,
-    "Balance": balance.round(2),
-    "NumOfProducts": num_products,
-    "HasCrCard": has_cr_card,
-    "IsActiveMember": is_active_member,
-    "EstimatedSalary": estimated_salary.round(2),
-    "Exited": exited,
-})
+df = pd.DataFrame(
+    {
+        "RowNumber": range(1, N + 1),
+        "CustomerId": np.random.randint(15_000_000, 16_000_000, N),
+        "Surname": ["Customer_" + str(i) for i in range(N)],
+        "CreditScore": credit_score,
+        "Geography": geography,
+        "Gender": gender,
+        "Age": age,
+        "Tenure": tenure,
+        "Balance": balance.round(2),
+        "NumOfProducts": num_products,
+        "HasCrCard": has_cr_card,
+        "IsActiveMember": is_active_member,
+        "EstimatedSalary": estimated_salary.round(2),
+        "Exited": exited,
+    }
+)
 
 output_path = os.path.join("data", "raw", "churn.csv")
 os.makedirs(os.path.dirname(output_path), exist_ok=True)

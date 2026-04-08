@@ -1,10 +1,10 @@
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-import joblib
-import yaml
 import os
+
+import joblib
+import pandas as pd
+import yaml
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
 def load_params(params_path: str = "params.yaml") -> dict:
@@ -62,7 +62,13 @@ def split_and_scale(df: pd.DataFrame, params: dict):
     X_train_scaled = pd.DataFrame(X_train_scaled, columns=X_train.columns)
     X_test_scaled = pd.DataFrame(X_test_scaled, columns=X_test.columns)
 
-    return X_train_scaled, X_test_scaled, y_train.reset_index(drop=True), y_test.reset_index(drop=True), scaler
+    return (
+        X_train_scaled,
+        X_test_scaled,
+        y_train.reset_index(drop=True),
+        y_test.reset_index(drop=True),
+        scaler,
+    )
 
 
 def save_processed_data(X_train, X_test, y_train, y_test, scaler, output_dir: str):

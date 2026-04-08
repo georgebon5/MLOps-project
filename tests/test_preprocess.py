@@ -1,32 +1,35 @@
-import pytest
-import pandas as pd
-import numpy as np
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.abspath("."))
 
-from src.data.preprocess import clean_data, encode_features
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
+import pytest  # noqa: E402
+
+from src.data.preprocess import clean_data, encode_features  # noqa: E402
 
 
 @pytest.fixture
 def raw_df():
-    return pd.DataFrame({
-        "RowNumber": [1, 2, 3],
-        "CustomerId": [111, 222, 333],
-        "Surname": ["A", "B", "C"],
-        "CreditScore": [650, 700, 580],
-        "Geography": ["France", "Germany", "Spain"],
-        "Gender": ["Male", "Female", "Male"],
-        "Age": [35, 45, 28],
-        "Tenure": [5, 3, 7],
-        "Balance": [75000.0, 0.0, 120000.0],
-        "NumOfProducts": [2, 1, 3],
-        "HasCrCard": [1, 0, 1],
-        "IsActiveMember": [1, 1, 0],
-        "EstimatedSalary": [90000.0, 60000.0, 110000.0],
-        "Exited": [0, 1, 0],
-    })
+    return pd.DataFrame(
+        {
+            "RowNumber": [1, 2, 3],
+            "CustomerId": [111, 222, 333],
+            "Surname": ["A", "B", "C"],
+            "CreditScore": [650, 700, 580],
+            "Geography": ["France", "Germany", "Spain"],
+            "Gender": ["Male", "Female", "Male"],
+            "Age": [35, 45, 28],
+            "Tenure": [5, 3, 7],
+            "Balance": [75000.0, 0.0, 120000.0],
+            "NumOfProducts": [2, 1, 3],
+            "HasCrCard": [1, 0, 1],
+            "IsActiveMember": [1, 1, 0],
+            "EstimatedSalary": [90000.0, 60000.0, 110000.0],
+            "Exited": [0, 1, 0],
+        }
+    )
 
 
 def test_clean_data_drops_irrelevant_columns(raw_df):
@@ -37,19 +40,21 @@ def test_clean_data_drops_irrelevant_columns(raw_df):
 
 
 def test_clean_data_drops_duplicates():
-    df = pd.DataFrame({
-        "CreditScore": [650, 650],
-        "Geography": ["France", "France"],
-        "Gender": ["Male", "Male"],
-        "Age": [35, 35],
-        "Tenure": [5, 5],
-        "Balance": [75000.0, 75000.0],
-        "NumOfProducts": [2, 2],
-        "HasCrCard": [1, 1],
-        "IsActiveMember": [1, 1],
-        "EstimatedSalary": [90000.0, 90000.0],
-        "Exited": [0, 0],
-    })
+    df = pd.DataFrame(
+        {
+            "CreditScore": [650, 650],
+            "Geography": ["France", "France"],
+            "Gender": ["Male", "Male"],
+            "Age": [35, 35],
+            "Tenure": [5, 5],
+            "Balance": [75000.0, 75000.0],
+            "NumOfProducts": [2, 2],
+            "HasCrCard": [1, 1],
+            "IsActiveMember": [1, 1],
+            "EstimatedSalary": [90000.0, 90000.0],
+            "Exited": [0, 0],
+        }
+    )
     cleaned = clean_data(df)
     assert len(cleaned) == 1
 

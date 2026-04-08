@@ -1,10 +1,10 @@
 import os
+from contextlib import asynccontextmanager
+
 import joblib
-import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-from contextlib import asynccontextmanager
 
 MODEL_PATH = os.getenv("MODEL_PATH", "models/best_model.pkl")
 SCALER_PATH = os.getenv("SCALER_PATH", "data/processed/scaler.pkl")
@@ -37,12 +37,24 @@ app = FastAPI(
 
 
 class CustomerFeatures(BaseModel):
-    model_config = {"json_schema_extra": {"example": {
-        "CreditScore": 650, "Gender": 1, "Age": 35, "Tenure": 5,
-        "Balance": 75000.0, "NumOfProducts": 2, "HasCrCard": 1,
-        "IsActiveMember": 1, "EstimatedSalary": 90000.0,
-        "Geography_France": 1, "Geography_Germany": 0, "Geography_Spain": 0,
-    }}}
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "CreditScore": 650,
+                "Gender": 1,
+                "Age": 35,
+                "Tenure": 5,
+                "Balance": 75000.0,
+                "NumOfProducts": 2,
+                "HasCrCard": 1,
+                "IsActiveMember": 1,
+                "EstimatedSalary": 90000.0,
+                "Geography_France": 1,
+                "Geography_Germany": 0,
+                "Geography_Spain": 0,
+            }
+        }
+    }
 
     CreditScore: int = Field(..., ge=300, le=900)
     Gender: int = Field(..., ge=0, le=1, description="0=Female, 1=Male")
@@ -82,9 +94,18 @@ def predict(customer: CustomerFeatures):
         raise HTTPException(status_code=503, detail="Model not loaded")
 
     feature_order = [
-        "CreditScore", "Gender", "Age", "Tenure", "Balance",
-        "NumOfProducts", "HasCrCard", "IsActiveMember", "EstimatedSalary",
-        "Geography_France", "Geography_Germany", "Geography_Spain",
+        "CreditScore",
+        "Gender",
+        "Age",
+        "Tenure",
+        "Balance",
+        "NumOfProducts",
+        "HasCrCard",
+        "IsActiveMember",
+        "EstimatedSalary",
+        "Geography_France",
+        "Geography_Germany",
+        "Geography_Spain",
     ]
 
     input_df = pd.DataFrame([customer.model_dump()])[feature_order]

@@ -1,14 +1,18 @@
-import pandas as pd
-import numpy as np
+import json
+import os
+import sys
+
+import joblib
 import mlflow
 import mlflow.sklearn
+import pandas as pd
 import yaml
-import os
-import joblib
-
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.linear_model import LogisticRegression
 from imblearn.over_sampling import SMOTE
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+
+sys.path.insert(0, os.path.abspath("."))
+from src.models.evaluate import compute_metrics  # noqa: E402
 
 
 def load_params(params_path: str = "params.yaml") -> dict:
@@ -53,10 +57,6 @@ def get_models(params: dict) -> dict:
 
 
 def train_and_log(models: dict, X_train, y_train, X_test, y_test, params: dict):
-    import sys
-    sys.path.insert(0, os.path.abspath("."))
-    from src.models.evaluate import compute_metrics
-
     mlflow.set_experiment("churn-prediction")
 
     best_model = None
@@ -68,13 +68,15 @@ def train_and_log(models: dict, X_train, y_train, X_test, y_test, params: dict):
             print(f"\nTraining {name}...")
 
             # Log params
-            mlflow.log_params({
-                "model_type": name,
-                "n_estimators": params["model"].get("n_estimators", "N/A"),
-                "max_depth": params["model"].get("max_depth", "N/A"),
-                "test_size": params["data"]["test_size"],
-                "smote": True,
-            })
+            mlflow.log_params(
+                {
+                    "model_type": name,
+                    "n_estimators": params["model"].get("n_estimators", "N/A"),
+                    "max_depth": params["model"].get("max_depth", "N/A"),
+                    "test_size": params["data"]["test_size"],
+                    "smote": True,
+                }
+            )
 
             model.fit(X_train, y_train)
             metrics = compute_metrics(model, X_test, y_test)
@@ -118,12 +120,11 @@ if __name__ == "__main__":
     joblib.dump(best_model, os.path.join("models", "best_model.pkl"))
 
     # Export best model metrics for DVC tracking
-    import json
-    from src.models.evaluate import compute_metrics
+
     best_metrics = compute_metrics(best_model, X_test, y_test)
     with open("metrics.json", "w") as f:
         json.dump(best_metrics, f, indent=2)
 
-    print(f"\nBest model saved to models/best_model.pkl")
+    print("\nBest model saved to models/best_model.pkl")
     print(f"MLflow run ID: {best_run_id}")
     print(f"Metrics: {best_metrics}")

@@ -1,9 +1,10 @@
+import os
+import sys
+from unittest.mock import MagicMock, patch
+
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import patch, MagicMock
-import numpy as np
-import sys
-import os
 
 sys.path.insert(0, os.path.abspath("."))
 
@@ -33,9 +34,9 @@ def client():
     mock_scaler = MagicMock()
     mock_scaler.transform.return_value = np.zeros((1, 12))
 
-    with patch("src.api.main.model", mock_model), \
-         patch("src.api.main.scaler", mock_scaler):
+    with patch("src.api.main.model", mock_model), patch("src.api.main.scaler", mock_scaler):
         from src.api.main import app
+
         with TestClient(app) as c:
             yield c
 
