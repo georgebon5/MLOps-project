@@ -31,3 +31,4 @@ mlartifacts/
 
 # OS
 .DS_Store
+monitoring/reports/
