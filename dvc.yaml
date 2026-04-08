@@ -21,3 +21,22 @@ stages:
       - data/processed/y_train.csv
       - data/processed/y_test.csv
       - data/processed/scaler.pkl
+
+  train:
+    cmd: python src/models/train.py
+    deps:
+      - src/models/train.py
+      - src/models/evaluate.py
+      - data/processed/X_train.csv
+      - data/processed/X_test.csv
+      - data/processed/y_train.csv
+      - data/processed/y_test.csv
+      - params.yaml
+    params:
+      - model
+      - data
+    outs:
+      - models/best_model.pkl
+    metrics:
+      - metrics.json:
+          cache: false
