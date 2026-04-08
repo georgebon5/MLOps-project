@@ -1,0 +1,57 @@
+schema: '2.0'
+stages:
+  generate_data:
+    cmd: python src/data/generate_dataset.py
+    deps:
+    - path: src/data/generate_dataset.py
+      hash: md5
+      md5: dde72a62ecdeae9c4eebd8f266443d05
+      size: 2063
+    outs:
+    - path: data/raw/churn.csv
+      hash: md5
+      md5: 2d4a2aebae643cc3bdbb2b50237fcdfd
+      size: 744962
+  preprocess:
+    cmd: python src/data/preprocess.py
+    deps:
+    - path: data/raw/churn.csv
+      hash: md5
+      md5: 2d4a2aebae643cc3bdbb2b50237fcdfd
+      size: 744962
+    - path: params.yaml
+      hash: md5
+      md5: d1094a7293dafd1bfd48deb51cbf163c
+      size: 141
+    - path: src/data/preprocess.py
+      hash: md5
+      md5: 1bf42b8d12e97e8e693947f34955509a
+      size: 2916
+    params:
+      params.yaml:
+        data:
+          test_size: 0.2
+          random_state: 42
+        training:
+          target_column: Exited
+    outs:
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: 7d846eb3158b94d66e1cbb7b9bead16c
+      size: 466257
+    - path: data/processed/X_train.csv
+      hash: md5
+      md5: e4fdc0263e0d47f9f9275a5f7ef3b27d
+      size: 1864607
+    - path: data/processed/scaler.pkl
+      hash: md5
+      md5: c3f63ab2528d2b11bc1cc7a0592af6d1
+      size: 1287
+    - path: data/processed/y_test.csv
+      hash: md5
+      md5: b692f7d3f99a9df81c02bc2ee2474763
+      size: 4007
+    - path: data/processed/y_train.csv
+      hash: md5
+      md5: 0d7da62861828d252f7e77edb0d254df
+      size: 16007

@@ -18,13 +18,12 @@ env/
 mlruns/
 mlartifacts/
 
-# DVC
-/data/raw/*
-/data/processed/*
-/models/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-!models/.gitkeep
+# DVC - track actual data files via DVC, not git
+/data/raw/*.csv
+/data/processed/*.csv
+/data/processed/*.pkl
+/models/*.pkl
+/models/*.joblib
 
 # Environment
 .env

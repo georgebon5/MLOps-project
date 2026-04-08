@@ -1,0 +1,23 @@
+stages:
+  generate_data:
+    cmd: python src/data/generate_dataset.py
+    deps:
+      - src/data/generate_dataset.py
+    outs:
+      - data/raw/churn.csv
+
+  preprocess:
+    cmd: python src/data/preprocess.py
+    deps:
+      - src/data/preprocess.py
+      - data/raw/churn.csv
+      - params.yaml
+    params:
+      - data
+      - training
+    outs:
+      - data/processed/X_train.csv
+      - data/processed/X_test.csv
+      - data/processed/y_train.csv
+      - data/processed/y_test.csv
+      - data/processed/scaler.pkl
