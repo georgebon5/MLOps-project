@@ -5,8 +5,8 @@ stages:
     deps:
     - path: src/data/generate_dataset.py
       hash: md5
-      md5: dde72a62ecdeae9c4eebd8f266443d05
-      size: 2063
+      md5: aed02ba199852ae58991baa1d1c55c4f
+      size: 2131
     outs:
     - path: data/raw/churn.csv
       hash: md5
@@ -25,8 +25,8 @@ stages:
       size: 141
     - path: src/data/preprocess.py
       hash: md5
-      md5: 1bf42b8d12e97e8e693947f34955509a
-      size: 2916
+      md5: 6bcdcb98ccdb5d40bb4af62ba2c66da8
+      size: 2947
     params:
       params.yaml:
         data:
@@ -80,12 +80,12 @@ stages:
       size: 141
     - path: src/models/evaluate.py
       hash: md5
-      md5: e13b216d53e0bb4c15609e3221649f20
-      size: 1268
+      md5: 958a39a23ecdfa48e7c856c4e979657b
+      size: 1256
     - path: src/models/train.py
       hash: md5
-      md5: a0710cc577523a605147cd5412b0d37f
-      size: 4399
+      md5: fe11773eb9c929da33146adddb17504a
+      size: 4380
     params:
       params.yaml:
         data:
