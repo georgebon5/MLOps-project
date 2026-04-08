@@ -1,0 +1,15 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.dvc/
+mlruns/
+mlartifacts/
+notebooks/
+.pytest_cache/
+.coverage
+*.egg-info/
+.env
+.DS_Store
