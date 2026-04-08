@@ -2,10 +2,14 @@ import os
 from contextlib import asynccontextmanager
 
 import joblib
+import mlflow.pyfunc
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+# If USE_REGISTRY=true, load from MLflow Model Registry (@production alias)
+# Otherwise fall back to local pickle file (useful in CI/Docker without MLflow server)
+USE_REGISTRY = os.getenv("USE_REGISTRY", "false").lower() == "true"
 MODEL_PATH = os.getenv("MODEL_PATH", "models/best_model.pkl")
 SCALER_PATH = os.getenv("SCALER_PATH", "data/processed/scaler.pkl")
 
@@ -16,13 +20,21 @@ scaler = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global model, scaler
-    if not os.path.exists(MODEL_PATH):
-        raise RuntimeError(f"Model not found at {MODEL_PATH}")
+
+    if USE_REGISTRY:
+        print("Loading model from MLflow Registry (@production)...")
+        model = mlflow.pyfunc.load_model("models:/churn-predictor@production")
+        print("Model loaded from MLflow Registry")
+    else:
+        if not os.path.exists(MODEL_PATH):
+            raise RuntimeError(f"Model not found at {MODEL_PATH}")
+        model = joblib.load(MODEL_PATH)
+        print(f"Model loaded from {MODEL_PATH}")
+
     if not os.path.exists(SCALER_PATH):
         raise RuntimeError(f"Scaler not found at {SCALER_PATH}")
-    model = joblib.load(MODEL_PATH)
     scaler = joblib.load(SCALER_PATH)
-    print(f"Model loaded from {MODEL_PATH}")
+
     yield
     model = None
     scaler = None

@@ -84,8 +84,12 @@ def train_and_log(models: dict, X_train, y_train, X_test, y_test, params: dict):
             # Log metrics
             mlflow.log_metrics(metrics)
 
-            # Log model artifact
-            mlflow.sklearn.log_model(model, artifact_path="model")
+            # Log model artifact and register in Model Registry
+            mlflow.sklearn.log_model(
+                model,
+                artifact_path="model",
+                registered_model_name="churn-predictor",
+            )
 
             print(f"  Accuracy : {metrics['accuracy']:.4f}")
             print(f"  F1 Score : {metrics['f1_score']:.4f}")
@@ -124,6 +128,18 @@ if __name__ == "__main__":
     best_metrics = compute_metrics(best_model, X_test, y_test)
     with open("metrics.json", "w") as f:
         json.dump(best_metrics, f, indent=2)
+
+    # Promote best model to Production in the Registry
+    client = mlflow.tracking.MlflowClient()
+    model_versions = client.search_model_versions(f"run_id='{best_run_id}'")
+    if model_versions:
+        best_version = model_versions[0].version
+        client.set_registered_model_alias(
+            name="churn-predictor",
+            alias="production",
+            version=best_version,
+        )
+        print(f"\nModel version {best_version} promoted to @production")
 
     print("\nBest model saved to models/best_model.pkl")
     print(f"MLflow run ID: {best_run_id}")
