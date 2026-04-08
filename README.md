@@ -35,6 +35,8 @@ The dataset is synthetic but reflects realistic class imbalance (~9% churn rate)
 ## Project structure
 
 ```
+├── notebooks/
+│   └── 01_eda.ipynb   # exploratory data analysis
 ├── src/
 │   ├── data/          # data generation and preprocessing
 │   ├── models/        # training, evaluation
@@ -68,13 +70,29 @@ API docs available at `http://localhost:8000/docs`
 
 ---
 
-## Training
+## EDA
 
-Three models are compared per run — Random Forest, Gradient Boosting, and Logistic Regression. SMOTE handles class imbalance. The best model by F1 score is saved.
+Before modeling, exploratory analysis covers class imbalance, feature distributions, correlation heatmap, and feature importance. Open the notebook:
+
+```bash
+jupyter notebook notebooks/01_eda.ipynb
+```
+
+---
+
+## Training & Model Registry
+
+Three models are compared per run — Random Forest, Gradient Boosting, and Logistic Regression. SMOTE handles class imbalance. The best model by F1 score is automatically registered in the MLflow Model Registry and promoted to `@production`.
 
 ```bash
 python src/models/train.py
-mlflow ui  # view experiment results
+mlflow ui  # view experiments and registry
+```
+
+The API can load directly from the registry instead of a local file:
+
+```bash
+USE_REGISTRY=true uvicorn src.api.main:app --reload
 ```
 
 ---
